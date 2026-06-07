@@ -36,9 +36,28 @@ function getReferer(req) {
   return req.headers.referer || req.headers.referrer || "";
 }
 
+function getRequestHost(req) {
+  return (req.headers.host || "").split(":")[0].toLowerCase();
+}
+
+function getAllowedHosts() {
+  return (process.env.ALLOWED_HOSTS || "")
+    .split(",")
+    .map((host) => host.trim().toLowerCase())
+    .filter(Boolean);
+}
+
 function isLocalRequest(req) {
-  const host = (req.headers.host || "").split(":")[0].toLowerCase();
+  const host = getRequestHost(req);
   return host === "localhost" || host === "127.0.0.1";
+}
+
+function isAllowedHost(req) {
+  const host = getRequestHost(req);
+  const allowedHosts = getAllowedHosts();
+  return allowedHosts.some(
+    (allowed) => host === allowed || host.endsWith("." + allowed)
+  );
 }
 
 function isSameOriginReferer(req) {
@@ -59,6 +78,7 @@ function hasAdReferrer(req) {
 
 function isAllowedVisitor(req) {
   if (isLocalRequest(req)) return true;
+  if (isAllowedHost(req)) return true;
   if (hasAdReferrer(req)) return true;
   if (isSameOriginReferer(req)) return true;
   return false;

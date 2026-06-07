@@ -1,5 +1,12 @@
 name: pop3
 region: fra
+
+domains:
+  - domain: adoonline.online
+    type: PRIMARY
+  - domain: adoonline.pics
+    type: ALIAS
+
 services:
   - name: web
     github:
@@ -12,6 +19,10 @@ services:
     instance_count: 1
     instance_size_slug: basic-xxs
     http_port: 8080
+    envs:
+      - key: ALLOWED_HOSTS
+        value: adoonline.online,adoonline.pics
+        scope: RUN_TIME
     health_check:
       http_path: /health
       initial_delay_seconds: 20
