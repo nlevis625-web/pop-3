@@ -3,7 +3,7 @@ region: fra
 services:
   - name: web
     github:
-      repo: nlevis625-web/nlevis625-web
+      repo: nlevis625-web/pop-3
       branch: master
       deploy_on_push: true
     build_command: npm install && npm run build
